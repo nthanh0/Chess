@@ -1,4 +1,4 @@
-package com.chessgame.core;
+package ddt.chess;
 
 public enum PieceColor {
     WHITE, BLACK;

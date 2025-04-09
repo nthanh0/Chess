@@ -1,4 +1,4 @@
-package com.chessgame.core;
+package ddt.chess;
 
 public class Square {
     private final int x;

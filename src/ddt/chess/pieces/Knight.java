@@ -1,5 +1,5 @@
-package com.chessgame.core.pieces;
-import com.chessgame.core.*;
+package ddt.chess.pieces;
+import ddt.chess.*;
 
 public class Knight extends Piece {
     public Knight(PieceColor color) { super(color, PieceType.KNIGHT); }

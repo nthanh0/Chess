@@ -1,4 +1,4 @@
-package com.chessgame.core;
+package ddt.chess;
 
 public abstract class Piece {
     private final PieceColor color;

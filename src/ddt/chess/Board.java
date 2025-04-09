@@ -1,4 +1,4 @@
-package com.chessgame.core;
+package ddt.chess;
 
 public class Board {
     private Square board[][];
