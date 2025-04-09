@@ -8,7 +8,6 @@ public abstract class Piece {
         this.color = color;
         this.type = type;
     }
-    public Piece() {}
 
     public PieceColor getColor() { return color; }
     public PieceType getType() { return type; }
