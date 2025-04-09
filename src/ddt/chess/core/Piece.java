@@ -1,4 +1,4 @@
-package ddt.chess;
+package ddt.chess.core;
 
 public abstract class Piece {
     private final PieceColor color;
@@ -13,5 +13,6 @@ public abstract class Piece {
     public PieceType getType() { return type; }
     public void setType(PieceType type) { this.type = type; }
 
-    public abstract boolean isValidMove(Board board, Square from, Square to);
+    public boolean isWhite() { return color == PieceColor.WHITE; }
+    public abstract boolean isValidMove(Board board, Square fromSquare, Square toSquare);
 }
