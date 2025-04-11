@@ -32,13 +32,19 @@ public class Notation {
     public static String moveToNotation(Move move, Board board) {
         StringBuilder res = new StringBuilder();
         boolean isPawn = move.getMovingPiece().getType() == PieceType.PAWN;
+        int fromSquareX = move.getFromSquare().getX();
+        int fromSquareY = move.getFromSquare().getY();
         if (!isPawn) {
             res.append(Notation.getPieceSymbol(move.getMovingPiece().getType()));
         }
-        int fromSquareX = move.getFromSquare().getX();
-        int fromSquareY = move.getFromSquare().getY();
+        // castling
+        if (move.getMovingPiece().getType() == PieceType.KING
+            && move.getFromSquare().yDistanceTo(move.getToSquare()) == 2) {
+            return move.getToSquare().getY() > fromSquareY ? "O-O" : "O-O-O";
+        }
         if (isPawn) {
-            // pawns always have to specify the file when capturing
+            // pawns only and always have to specify the file when capturing
+            // so no checking is needed
             if (move.isCapture()) {
                 res.append(Notation.squareToNotation(move.getFromSquare()).charAt(0));
             }
