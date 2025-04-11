@@ -26,24 +26,17 @@ public class Square {
         this.piece = piece;
     }
 
+
+    public boolean isEmpty() {
+        return (piece == null);
+    }
+    public boolean isOccupied() { return !(isEmpty()); }
+
     public int xDistanceTo(Square other) {
         return Math.abs(x - other.getX());
     }
 
     public int yDistanceTo(Square other) {
         return Math.abs(y - other.getY());
-    }
-
-    // from e.g "a3" to Square(5, 0);
-    public static Square fromNotation(String notation) {
-        int x = notation.charAt(1) - '1';
-        int y = notation.charAt(0) - 'a';
-        return new Square(x, y);
-    }
-
-    // the opposite
-    public String toNotation() {
-        // empty string (for string type casting) + rank char + file char
-        return "" + (char)('a' + y) + (char)('1' + x);
     }
 }

@@ -7,8 +7,10 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public boolean isValidMove(Board board, Square fromSquare, Square toSquare) {
+    public boolean isValidPattern(Move move) {
         // difference between the x's and y's must be equal toSquare be a valid bishop move
-        return fromSquare.xDistanceTo(toSquare) == fromSquare.yDistanceTo(toSquare);
+        Square fromSquare = move.getFromSquare();
+        Square toSquare = move.getToSquare();
+        return (fromSquare.xDistanceTo(toSquare) == fromSquare.yDistanceTo(toSquare));
     }
 }

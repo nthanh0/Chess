@@ -14,5 +14,5 @@ public abstract class Piece {
     public void setType(PieceType type) { this.type = type; }
 
     public boolean isWhite() { return color == PieceColor.WHITE; }
-    public abstract boolean isValidMove(Board board, Square fromSquare, Square toSquare);
+    public abstract boolean isValidPattern(Move move);
 }

@@ -5,7 +5,9 @@ public class Rook extends Piece {
     public Rook(PieceColor color) { super(color, PieceType.ROOK); }
 
     @Override
-    public boolean isValidMove(Board board, Square fromSquare, Square toSquare) {
+    public boolean isValidPattern(Move move) {
+        Square fromSquare = move.getFromSquare();
+        Square toSquare = move.getToSquare();
         if (fromSquare.getX() == toSquare.getX()) {
             // equal x's means moving horizontally
             // and in this case the move is only valid when the y's are different

@@ -1,16 +1,17 @@
 package ddt.chess.core;
 
+// a class that stores information about a move
 public class Move {
     private final Square fromSquare;
     private final Square toSquare;
     private final Piece movingPiece;
     private final Piece capturedPiece;
 
-    Move(Square fromSquare, Square toSquare, Piece movingPiece, Piece capturedPiece) {
+    public Move(Square fromSquare, Square toSquare) {
         this.fromSquare = fromSquare;
         this.toSquare = toSquare;
-        this.movingPiece = movingPiece;
-        this.capturedPiece = capturedPiece;
+        this.movingPiece = fromSquare.getPiece();
+        this.capturedPiece = toSquare.getPiece();
     }
 
     public Square getFromSquare() {
@@ -24,5 +25,10 @@ public class Move {
     }
     public Piece getCapturedPiece() {
         return capturedPiece;
+    }
+
+    public boolean isCapture() {
+        return (capturedPiece != null
+                && movingPiece.getColor() != capturedPiece.getColor());
     }
 }

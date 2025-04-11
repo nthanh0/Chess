@@ -5,7 +5,9 @@ public class Knight extends Piece {
     public Knight(PieceColor color) { super(color, PieceType.KNIGHT); }
 
     @Override
-    public boolean isValidMove(Board board, Square fromSquare, Square toSquare) {
+    public boolean isValidPattern(Move move) {
+        Square fromSquare = move.getFromSquare();
+        Square toSquare = move.getToSquare();
         if (fromSquare.xDistanceTo(toSquare) == 2) {
             // if the vertical difference is 2 squares
             // then the horizontal difference must be 1 for the move toSquare be valid knight move
