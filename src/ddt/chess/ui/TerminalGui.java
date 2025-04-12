@@ -4,6 +4,7 @@ import ddt.chess.core.*;
 import ddt.chess.util.MoveHistory;
 import ddt.chess.util.Notation;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TerminalGui {
@@ -13,7 +14,7 @@ public class TerminalGui {
         Board board = game.getBoard();
         MoveHistory history = game.getHistory();
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        while (!game.isOver()) {
             printHistory(board, history);
             printBoard(board);
             System.out.print("Enter starting square: ");
@@ -30,8 +31,8 @@ public class TerminalGui {
             String destString = scanner.nextLine();
             Square toSquare = Notation.getSquareFromNotation(board, destString);
             game.makeMove(new Move(fromSquare, toSquare));
-
         }
+        System.out.println(game.getGameOverMessage());
     }
 
     public void printBoard(Board board) {
@@ -68,5 +69,12 @@ public class TerminalGui {
         System.out.println("History: " + history.getHistoryString(board));
     }
 
+    public void printValidMoves(ArrayList<Move> moves, Board board) {
+        System.out.print("Valid moves: ");
+        for (Move move : moves) {
+            System.out.print(Notation.moveToNotation(move, board) + " ");
+        }
+        System.out.println();
+    }
 
 }

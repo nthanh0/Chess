@@ -1,5 +1,8 @@
 package ddt.chess.core;
 import ddt.chess.core.pieces.*;
+import ddt.chess.logic.MoveValidator;
+
+import java.util.ArrayList;
 
 public class Board {
     private final Square[][] board;
@@ -63,4 +66,82 @@ public class Board {
         move.getToSquare().setPiece(move.getCapturedPiece());
     }
 
+
+    public Square findKingSquare(PieceColor color) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Square square = board[i][j];
+                if (square.isEmpty()) {
+                    // skip empty squares;
+                    continue;
+                }
+                Piece piece = square.getPiece();
+                if (piece.getType() == PieceType.KING
+                        && piece.getColor() == color) {
+                    return square;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public boolean isCheck(PieceColor color) {
+        Square kingSquare = findKingSquare(color);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Square square = board[i][j];
+                if (square.isEmpty()) {
+                    // skip empty squares;
+                    continue;
+                }
+                Piece piece = square.getPiece();
+                if (piece.getColor() == color) {
+                    // skip pieces of the same color
+                    continue;
+                }
+                Move moveToKing = new Move(square, kingSquare);
+                if (MoveValidator.isValidMove(this, moveToKing)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public ArrayList<Move> generateAllValidMoves(PieceColor color) {
+        ArrayList<Move> res = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Square square = getSquare(i, j);
+                if (square.isEmpty()) {
+                    // skip empty squares;
+                    continue;
+                }
+                if (square.getPiece().getColor() != color) {
+                    // ignore pieces of the opposite color
+                    continue;
+                }
+                for (int k = 0; k < 8; k++) {
+                    for (int l = 0; l < 8; l++) {
+                        Square otherSquare = getSquare(k, l);
+                        Move move = new Move(square, otherSquare);
+                        if (MoveValidator.isValidMove(this, new Move(square, otherSquare))) {
+                            res.add(move);
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    public boolean isSafeAfterMove(Move move) {
+        boolean res;
+        makeMove(move);
+        // if king is in check after move then it's not valid
+        res = !isCheck(move.getMovingPiece().getColor());
+        undoMove(move);
+        return res;
+    }
 }
