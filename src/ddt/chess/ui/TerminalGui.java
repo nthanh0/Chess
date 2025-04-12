@@ -32,7 +32,6 @@ public class TerminalGui {
             Square toSquare = Notation.getSquareFromNotation(board, destString);
             game.makeMove(new Move(fromSquare, toSquare));
         }
-        printBoard(board);
         System.out.println(game.getGameOverMessage());
     }
 
