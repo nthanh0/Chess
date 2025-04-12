@@ -8,7 +8,8 @@ public class Game {
     private Player playerWhite;
     private Player playerBlack;
     private PieceColor turn = PieceColor.WHITE;
-    private boolean isOver = false;
+
+    private String gameOverMessage;
 
     public Game() {
         board = new Board();
@@ -54,16 +55,24 @@ public class Game {
             return false;
         }
         // if there is no valid move then it's checkmate
-        return board.generateAllValidMoves(turn).isEmpty();
+        if (board.generateAllValidMoves(turn).isEmpty()) {
+            gameOverMessage = "Checkmate. "  + ((turn == PieceColor.WHITE) ? "Black" : "White") + " wins";
+            return true;
+        }
+        return false;
     }
 
     public boolean isStalemate() {
         // has to not be in check to be a stalemate
-        if (!board.isCheck(turn)) {
+        if (board.isCheck(turn)) {
             return false;
         }
         // if there is no valid move then it's stalemate
-        return board.generateAllValidMoves(turn).isEmpty();
+        if (board.generateAllValidMoves(turn).isEmpty()) {
+            gameOverMessage = "Stalemate. Draw.";
+            return true;
+        }
+        return false;
     }
 
     public Player getPlayerWhite() {
@@ -79,11 +88,6 @@ public class Game {
     }
 
     public String getGameOverMessage() {
-        if (isCheckMate()) {
-            return "Checkmate. "  + ((turn == PieceColor.WHITE) ? "Black" : "White") + " wins";
-        } else if (isStalemate()) {
-            return "Stalemate. Draw.";
-        }
-        return "";
+        return gameOverMessage;
     }
 }
