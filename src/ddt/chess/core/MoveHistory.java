@@ -1,6 +1,5 @@
-package ddt.chess.util;
-import ddt.chess.core.Board;
-import ddt.chess.core.Move;
+package ddt.chess.core;
+import ddt.chess.util.Notation;
 
 import java.util.ArrayList;
 

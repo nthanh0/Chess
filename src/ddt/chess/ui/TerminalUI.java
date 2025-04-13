@@ -1,7 +1,7 @@
 package ddt.chess.ui;
 
 import ddt.chess.core.*;
-import ddt.chess.util.MoveHistory;
+import ddt.chess.core.MoveHistory;
 import ddt.chess.util.Notation;
 
 

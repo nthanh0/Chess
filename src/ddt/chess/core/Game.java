@@ -1,7 +1,6 @@
 package ddt.chess.core;
 import ddt.chess.logic.MoveValidator;
 import ddt.chess.ui.TerminalUI;
-import ddt.chess.util.MoveHistory;
 
 public class Game {
     private Board board;
