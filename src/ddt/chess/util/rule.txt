@@ -1,0 +1,28 @@
+Introduction to Chess
+        + Chess is a two-player strategy board game that has been played for centuries around the world. 
+          It is a game of skill, tactics, and foresight. The game is played on a 8x8 square board with alternating 
+          light and dark squares, and each player starts with 16 pieces: one king, one queen, two rooks, two knights,
+          two bishops, and eight pawns. The objective of the game is to checkmate your opponent's king, which means
+          putting the king in a position where it is under attack and cannot escape.
+Basic Rules of Chess
+   1. The Chessboard
+        + The board has 64 squares, arranged in 8 rows (ranks) and 8 columns (files). The bottom-right square should always be a light square.
+   2. The Pieces and How They Move
+        + King: Moves one square in any direction.
+        + Queen: Moves any number of squares in any direction (horizontally, vertically, diagonally).
+        + Rook: Moves any number of squares vertically or horizontally.
+        + Bishop: Moves any number of squares diagonally.
+        + Knight: Moves in an \"L\" shape (two squares in one direction and then one square perpendicular).
+        +Pawn: Moves forward one square (or two squares from its starting position), and captures diagonally.
+   3. Special Moves
+        Castling: A move that allows the king and a rook to move simultaneously. Conditions:"
+         +Neither piece has moved before.
+        The squares between them are empty.
+        The king is not in check, and does not pass through or end up in check.
+        En Passant: A special pawn capture that can occur immediately after an opponent moves a pawn two squares forward.
+        Promotion: When a pawn reaches the last rank, it must be promoted to any other piece (except king), usually a queen.
+   4. Check and Checkmate
+        Check: When the king is under threat of being captured.
+        Checkmate: When the king is in check and cannot escape – this ends the game.
+        Stalemate: When a player has no legal moves and is not in check – this results in a draw.
+
