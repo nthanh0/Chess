@@ -1,9 +1,10 @@
 package ddt.chess.core;
 import ddt.chess.logic.MoveValidator;
+import ddt.chess.ui.TerminalUI;
 import ddt.chess.util.MoveHistory;
 
 public class Game {
-    private final Board board;
+    private Board board;
     private final MoveHistory history;
     private Player playerWhite;
     private Player playerBlack;
@@ -19,20 +20,55 @@ public class Game {
 
     public void makeMove(Move move) {
         // check if piece color aligns with turn
-        if (move.getMovingPiece().getColor() == turn) {
-            if (MoveValidator.isValidMove(board, move)) {
-                // make move and add move to history
-                board.makeMove(move);
-                history.addMove(move);
-                // switch turns
-                turn = (turn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
+        if (move.getMovingPiece() != null && move.getMovingPiece().getColor() == turn) {
+            if (MoveValidator.isValidCastling(board, move)) {
+                move.setMoveType(MoveType.CASTLING);
+                board.performCastling(move);
+            } else if (MoveValidator.isValidEnPassant(move, history)) {
+                // handle en passant
+                move.setMoveType(MoveType.EN_PASSANT);
+                board.performEnPassant(move);
+            } else if (MoveValidator.isValidMove(board, move)) {
+                if (MoveValidator.isValidPromotion(move)) {
+                    // handle promotions
+                    move.setMoveType(MoveType.PROMOTION);
+                    PieceType promoteTo = TerminalUI.askForPromotion(); // call function that asks for promotion, can be changed
+                    board.promotePawn(move, promoteTo);
+                } else {
+                    if (move.isCapture()) {
+                        move.setMoveType(MoveType.CAPTURE);
+                    } else {
+                        move.setMoveType(MoveType.NORMAL);
+                    }
+                    // make move
+                    board.makeMove(move);
+                }
+                // set hasMoved to true
+                move.getMovingPiece().setHasMoved(true);
+            } else {
+                return;
             }
+            // add move to history
+            history.addMove(move);
+            // switch turns
+            switchTurns();
         }
     }
 
     public void undoLastMove() {
         if (!history.isEmpty()) {
-            board.undoMove(history.getLastMove());
+            // switch turns back
+            switchTurns();
+            Move lastMove = history.getLastMove();
+            // restore hasMoved flag
+            if (lastMove.isFirstMoveOfPiece()) {
+                lastMove.getMovingPiece().setHasMoved(false);
+            }
+            switch (lastMove.getMoveType()) {
+                case CASTLING -> board.undoCastling(lastMove);
+                case EN_PASSANT -> board.undoEnPassant(lastMove);
+                default -> board.undoMove(lastMove);
+            }
             history.undoLastMove();
         }
     }
@@ -90,4 +126,15 @@ public class Game {
     public String getGameOverMessage() {
         return gameOverMessage;
     }
+
+    public void resetBoard() {
+        history.resetHistory();
+        board = new Board();
+        board.setupPieces();
+    }
+
+    public void switchTurns() {
+        turn = (turn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
+    }
+
 }

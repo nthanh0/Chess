@@ -45,6 +45,8 @@ public class MoveHistory {
         }
         return res.toString();
     }
-
+    public void resetHistory() {
+        history.clear();
+    }
 
 }

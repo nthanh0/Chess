@@ -1,8 +1,9 @@
 package ddt.chess.core;
 
 public class Square {
-    private final int x;
+    // x is the rank, y is the file
     private final int y;
+    private final int x;
     Piece piece;
 
     public Square(int x, int y) {

@@ -29,18 +29,31 @@ public class Notation {
         };
     }
 
+    public static PieceType getPieceTypeFromSymbol(char symbol) {
+        return switch (symbol) {
+            case 'P' -> PieceType.PAWN;
+            case 'N' -> PieceType.KNIGHT;
+            case 'B' -> PieceType.BISHOP;
+            case 'R' -> PieceType.ROOK;
+            case 'Q' -> PieceType.QUEEN;
+            case 'K' -> PieceType.KING;
+            default -> null;
+        };
+    }
+
+
     public static String moveToNotation(Move move, Board board) {
         StringBuilder res = new StringBuilder();
         boolean isPawn = move.getMovingPiece().getType() == PieceType.PAWN;
         int fromSquareX = move.getFromSquare().getX();
         int fromSquareY = move.getFromSquare().getY();
+        // castling
+        if (move.getMoveType() == MoveType.CASTLING) {
+            System.out.println("IS CASTLING");
+            return (fromSquareY < move.getToSquare().getY()) ? "O-O" : "O-O-O";
+        }
         if (!isPawn) {
             res.append(Notation.getPieceSymbol(move.getMovingPiece().getType()));
-        }
-        // castling
-        if (move.getMovingPiece().getType() == PieceType.KING
-            && move.getFromSquare().yDistanceTo(move.getToSquare()) == 2) {
-            return move.getToSquare().getY() > fromSquareY ? "O-O" : "O-O-O";
         }
         if (isPawn) {
             // pawns only and always have to specify the file when capturing

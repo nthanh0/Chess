@@ -66,7 +66,6 @@ public class Board {
         move.getToSquare().setPiece(move.getCapturedPiece());
     }
 
-
     public Square findKingSquare(PieceColor color) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -88,6 +87,9 @@ public class Board {
 
     public boolean isCheck(PieceColor color) {
         Square kingSquare = findKingSquare(color);
+        if (kingSquare == null) {
+            return false;
+        }
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Square square = board[i][j];
@@ -144,4 +146,93 @@ public class Board {
         undoMove(move);
         return res;
     }
+
+    public void promotePawn(Move move, PieceType newType) {
+        if (move.getMovingPiece().getType() != PieceType.PAWN) {
+            return;
+        }
+        if (move.getToSquare().getY() != 7 && move.getToSquare().getY() != 0) {
+            return;
+        }
+        Piece newPiece = null;
+        switch (newType) {
+            case BISHOP -> newPiece = new Bishop(move.getMovingPiece().getColor());
+            case KNIGHT -> newPiece = new Knight(move.getMovingPiece().getColor());
+            case ROOK -> newPiece = new Rook(move.getMovingPiece().getColor());
+            case QUEEN -> newPiece = new Queen(move.getMovingPiece().getColor());
+        }
+        if (newPiece == null) {
+            return;
+        }
+        move.getToSquare().setPiece(newPiece);
+        move.getFromSquare().setPiece(null);
+    }
+
+    public void performEnPassant(Move move) {
+        int xDirection = (move.getMovingPiece().isWhite()) ? -1 : 1;
+        // store captured pawn in move
+        Piece capturedPawn = getSquare(move.getToSquare().getX() - xDirection, move.getToSquare().getY()).getPiece();
+        move.setCapturedPiece(capturedPawn);
+        // move pawn to destination
+        makeMove(move);
+        // remove pawn captured by en passant
+        getSquare(move.getToSquare().getX() - xDirection, move.getToSquare().getY()).setPiece(null);
+    }
+
+    public void performCastling(Move move) {
+        makeMove(move);
+        int fromX = move.getFromSquare().getX();
+        int yDirection = (move.getFromSquare().getY() < move.getToSquare().getY()) ? 1 : -1;
+        // 1 for king side, -1 for queen side
+        Square oldRookSquare;
+        Square newRookSquare;
+        if (yDirection == 1) {
+            // king side castle
+            oldRookSquare = getSquare(fromX, 7);
+            newRookSquare = getSquare(fromX, 5);
+        } else {
+            // queen side castle
+            oldRookSquare = getSquare(fromX, 0);
+            newRookSquare = getSquare(fromX, 3);
+        }
+        // move rook to next to king
+        newRookSquare.setPiece(oldRookSquare.getPiece());
+        oldRookSquare.setPiece(null);
+    }
+
+    public void undoEnPassant(Move move) {
+        // place moving pawn back to where it was
+        undoMove(move);
+        // removing excess pawn
+        move.getToSquare().setPiece(null);
+        // place captured pawn back to where it was
+        int xDirection = (move.getMovingPiece().isWhite()) ? -1 : 1;
+        int toX = move.getToSquare().getX();
+        int toY = move.getToSquare().getY();
+        getSquare(toX - xDirection, toY).setPiece(move.getCapturedPiece());
+    }
+
+    public void undoCastling(Move move) {
+        // place king back to where it was
+        undoMove(move);
+        int fromX = move.getFromSquare().getX();
+        int yDirection = (move.getFromSquare().getY() < move.getToSquare().getY()) ? 1 : -1;
+        // 1 for king side, -1 for queen side
+        Square oldRookSquare;
+        Square newRookSquare;
+        if (yDirection == 1) {
+            // king side castle
+            oldRookSquare = getSquare(fromX, 7);
+            newRookSquare = getSquare(fromX, 5);
+        } else {
+            // queen side castle
+            oldRookSquare = getSquare(fromX, 0);
+            newRookSquare = getSquare(fromX, 3);
+        }
+        // move rook back to the corner
+        oldRookSquare.setPiece(newRookSquare.getPiece());
+        newRookSquare.setPiece(null);
+    }
+
+
 }
