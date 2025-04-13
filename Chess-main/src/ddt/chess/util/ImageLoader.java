@@ -17,6 +17,7 @@ public class ImageLoader {
     private ImageIcon lightSquareImage;
     private ImageIcon darkSquareImage;
     private ImageIcon selectedSquareImage;
+    private ImageIcon checkSquareImage;
 
     private final int PIECE_SIZE = 40;
     private final int SQUARE_SIZE = 60;
@@ -138,6 +139,33 @@ public class ImageLoader {
             e.printStackTrace();
             return false;
         }
+    }
+    private ImageIcon createCheckSquareIcon() {
+        // Tạo biểu tượng ô khi vua bị chiếu (đỏ để cảnh báo)
+        BufferedImage img = new BufferedImage(SQUARE_SIZE, SQUARE_SIZE, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = img.createGraphics();
+
+        // Get theme colors
+        Color[] colors = themeColors.get(currentTheme);
+        if (colors == null) {
+            colors = themeColors.get("classic"); // Default to classic if theme not found
+        }
+
+        // Sử dụng màu ô sáng với viền đỏ
+        g2d.setColor(colors[0]);
+        g2d.fillRect(0, 0, SQUARE_SIZE, SQUARE_SIZE);
+
+        // Thêm viền đỏ
+        g2d.setColor(new Color(255, 0, 0, 220)); // Màu đỏ với độ trong suốt
+        g2d.setStroke(new BasicStroke(4));
+        g2d.drawRect(2, 2, SQUARE_SIZE - 4, SQUARE_SIZE - 4);
+
+        g2d.dispose();
+        return new ImageIcon(img);
+    }
+
+    public ImageIcon getCheckSquareImage() {
+        return checkSquareImage;
     }
 
     private void loadSquareImages() {

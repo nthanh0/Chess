@@ -15,6 +15,8 @@ public class BoardPanel extends JPanel {
     private Square selectedSquare;
     private final int SQUARE_SIZE = 60;
     private GameControlPanel controlPanel;
+    private boolean kingIsInCheck = false;
+    private Square checkedKingSquare = null;
 
     public BoardPanel(Game game, ImageLoader imageLoader) {
         this.game = game;
@@ -26,6 +28,9 @@ public class BoardPanel extends JPanel {
                 handleSquareClick(e.getX() / SQUARE_SIZE, e.getY() / SQUARE_SIZE);
             }
         });
+
+        // Kiểm tra trạng thái chiếu vua ban đầu
+        updateCheckStatus();
     }
 
     private void handleSquareClick(int y, int x) {
@@ -54,17 +59,29 @@ public class BoardPanel extends JPanel {
                 if (controlPanel != null) {
                     controlPanel.updateMoveHistory();
                 }
+                // Cập nhật trạng thái chiếu vua
+                updateCheckStatus();
             }
             selectedSquare = null;
             repaint();
         }
     }
 
+    private void updateCheckStatus() {
+        PieceColor currentColor = game.getCurrentTurn();
+        // Kiểm tra nếu vua của người chơi hiện tại đang bị chiếu
+        if (game.getBoard().isCheck(currentColor)) {
+            kingIsInCheck = true;
+            checkedKingSquare = game.getBoard().findKingSquare(currentColor);
+        } else {
+            kingIsInCheck = false;
+            checkedKingSquare = null;
+        }
+    }
+
+
     private PieceColor getCurrentPlayerColor() {
-        // Simple turn determination based on move count (white starts)
-        return game.getHistory().isEmpty() ||
-                game.getHistory().getHistoryString(game.getBoard()).split(" ").length % 2 == 0 ?
-                PieceColor.WHITE : PieceColor.BLACK;
+        return game.getCurrentTurn();
     }
 
     @Override
@@ -90,6 +107,13 @@ public class BoardPanel extends JPanel {
                         selectedSquare.getY() == j) {
                     imageLoader.getSelectedSquareImage().paintIcon(this, g2d, j * SQUARE_SIZE, i * SQUARE_SIZE);
                 }
+
+                // Highlight king in check
+                if (kingIsInCheck && checkedKingSquare != null &&
+                        checkedKingSquare.getX() == i &&
+                        checkedKingSquare.getY() == j) {
+                    imageLoader.getCheckSquareImage().paintIcon(this, g2d, j * SQUARE_SIZE, i * SQUARE_SIZE);
+                }
             }
         }
 
@@ -106,7 +130,7 @@ public class BoardPanel extends JPanel {
 
         // Draw coordinates
         g2d.setColor(Color.BLACK);
-        g2d.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        g2d.setFont(new Font("Arial", Font.BOLD, 12));
         for (int i = 0; i < 8; i++) {
             // File labels (a-h)
             g2d.drawString(String.valueOf((char)('a' + i)),
@@ -147,8 +171,11 @@ public class BoardPanel extends JPanel {
 
     public void resetBoard() {
         selectedSquare = null;
+        kingIsInCheck = false;
+        checkedKingSquare = null;
         repaint();
     }
+
     public void setControlPanel(GameControlPanel controlPanel) {
         this.controlPanel = controlPanel;
     }

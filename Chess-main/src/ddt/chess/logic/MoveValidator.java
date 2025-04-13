@@ -13,7 +13,7 @@ public class MoveValidator {
         }
         // check if destination square is occupied by a piece of the same color
         if (move.getCapturedPiece() != null
-            && move.getMovingPiece().getColor() == move.getCapturedPiece().getColor()) {
+                && move.getMovingPiece().getColor() == move.getCapturedPiece().getColor()) {
             return false;
         }
         // check if the moving pattern is valid
@@ -21,14 +21,18 @@ public class MoveValidator {
             return false;
         }
         // check if the moving path is blocked
-        return !isPathBlocked(board, move);
+        if (isPathBlocked(board, move)) {
+            return false;
+        }
+        // check if move is safe (does not introduce check)
+        return board.isSafeAfterMove(move);
     }
     public static boolean isPathBlocked(Board board, Move move) {
         Square fromSquare = move.getFromSquare();
         Square toSquare = move.getToSquare();
         Piece movingPiece = move.getMovingPiece();
-        int xDirection = (fromSquare.getX() < toSquare.getX()) ? 1 : -1;
-        int yDirection = (fromSquare.getY() < toSquare.getY()) ? 1 : -1;
+        int xDirection = Integer.compare(toSquare.getX(), fromSquare.getX());
+        int yDirection = Integer.compare(toSquare.getY(), fromSquare.getY()); // -1, 0, or 1
         switch(movingPiece.getType()) {
             case PAWN:
                 if (fromSquare.xDistanceTo(toSquare) == 2) {
@@ -39,7 +43,7 @@ public class MoveValidator {
                 break;
             case BISHOP:
                 for (int i = fromSquare.getX() + xDirection, j = fromSquare.getY() + yDirection;
-                     i != toSquare.getX() && j != toSquare.getY();
+                     i != toSquare.getX();
                      i += xDirection, j += yDirection) {
 
                     if (board.getSquare(i, j).isOccupied()) {
@@ -48,14 +52,14 @@ public class MoveValidator {
                 }
                 break;
             case ROOK:
-                if (fromSquare.getX() == toSquare.getX()) {
+                if (xDirection == 0) {
                     for (int i = fromSquare.getY() + yDirection;
                          i != toSquare.getY(); i += yDirection) {
                         if (board.getSquare(fromSquare.getX(), i).isOccupied()) {
                             return true;
                         }
                     }
-                } else if (fromSquare.getY() == toSquare.getY()) {
+                } else if (yDirection == 0) {
                     for (int i = fromSquare.getX() + xDirection;
                          i != toSquare.getX(); i += xDirection) {
                         if (board.getSquare(i, fromSquare.getY()).isOccupied()) {
@@ -67,7 +71,7 @@ public class MoveValidator {
             case QUEEN:
                 // bishop part
                 for (int i = fromSquare.getX() + xDirection, j = fromSquare.getY() + yDirection;
-                     i != toSquare.getX() && j != toSquare.getY();
+                     i != toSquare.getX();
                      i += xDirection, j += yDirection) {
 
                     if (board.getSquare(i, j).isOccupied()) {
@@ -76,14 +80,14 @@ public class MoveValidator {
                 }
 
                 // rook part
-                if (fromSquare.getX() == toSquare.getX()) {
+                if (xDirection == 0) {
                     for (int i = fromSquare.getY() + yDirection;
                          i != toSquare.getY(); i += yDirection) {
                         if (board.getSquare(fromSquare.getX(), i).isOccupied()) {
                             return true;
                         }
                     }
-                } else if (fromSquare.getY() == toSquare.getY()) {
+                } else if (yDirection == 0) {
                     for (int i = fromSquare.getX() + xDirection;
                          i != toSquare.getX(); i += xDirection) {
                         if (board.getSquare(i, fromSquare.getY()).isOccupied()) {

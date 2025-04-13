@@ -31,8 +31,17 @@ public class MoveHistory {
 
     public String getHistoryString(Board board) {
         StringBuilder res = new StringBuilder();
-        for (Move move : history) {
-            res.append(Notation.moveToNotation(move, board)).append(" ");
+        // move index
+        int moveIndex = 1;
+        for (int i = 0; i < history.size(); i++) {
+            // show and increase move index every 2 moves
+            // because a recorded move contains moves from both sides
+            if (i % 2 == 0) {
+                res.append(moveIndex).append(". ");
+                moveIndex++;
+            }
+            Move move = history.get(i);
+            res.append(Notation.moveToNotation(move, board)).append(' ');
         }
         return res.toString();
     }

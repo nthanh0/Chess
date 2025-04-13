@@ -30,10 +30,6 @@ public class Notation {
     }
 
     public static String moveToNotation(Move move, Board board) {
-        if (move == null || move.getMovingPiece() == null) {
-            return "";
-        }
-
         StringBuilder res = new StringBuilder();
         boolean isPawn = move.getMovingPiece().getType() == PieceType.PAWN;
         int fromSquareX = move.getFromSquare().getX();
@@ -43,7 +39,7 @@ public class Notation {
         }
         // castling
         if (move.getMovingPiece().getType() == PieceType.KING
-            && move.getFromSquare().yDistanceTo(move.getToSquare()) == 2) {
+                && move.getFromSquare().yDistanceTo(move.getToSquare()) == 2) {
             return move.getToSquare().getY() > fromSquareY ? "O-O" : "O-O-O";
         }
         if (isPawn) {
