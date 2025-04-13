@@ -2,7 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Chess" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Chess-1" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Chess-1/Chess-1" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Chess-1/new_directory_name" vcs="Git" />
