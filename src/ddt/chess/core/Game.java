@@ -17,7 +17,7 @@ public class Game {
         history = new MoveHistory();
     }
 
-    public void makeMove(Move move) {
+    public boolean makeMove(Move move) {
         // check if piece color aligns with turn
         if (move.getMovingPiece() != null && move.getMovingPiece().getColor() == turn) {
             if (MoveValidator.isValidCastling(board, move)) {
@@ -45,13 +45,18 @@ public class Game {
                 // set hasMoved to true
                 move.getMovingPiece().setHasMoved(true);
             } else {
-                return;
+                // is invalid move
+                return false;
             }
             // add move to history
             history.addMove(move);
             // switch turns
             switchTurns();
+            // is valid move
+            return true;
         }
+        // if wrong turn then is invalid move
+        return false;
     }
 
     public void undoLastMove() {

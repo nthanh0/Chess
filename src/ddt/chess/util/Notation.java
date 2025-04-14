@@ -18,7 +18,7 @@ public class Notation {
         return "" + (char)('a' + square.getY()) + (char)('1' + (7 - square.getX()));
     }
 
-    public static char getPieceSymbol(PieceType type) {
+    public static char getPieceSymbolFromType(PieceType type) {
         return switch (type) {
             case PAWN -> 'P';
             case KNIGHT -> 'N';
@@ -26,6 +26,25 @@ public class Notation {
             case ROOK -> 'R';
             case QUEEN -> 'Q';
             case KING -> 'K';
+        };
+    }
+
+    public static char getPieceSymbolFromPiece(Piece piece) {
+        char res = getPieceSymbolFromType(piece.getType());
+        if (!piece.isWhite()) {
+            res = Character.toLowerCase(res);
+        }
+        return res;
+    }
+
+    public static char getUnicodePieceSymbolFromType(PieceType type) {
+        return switch (type) {
+            case PAWN -> '♙';
+            case KNIGHT -> '♘';
+            case BISHOP -> '♗';
+            case ROOK -> '♖';
+            case QUEEN -> '♕';
+            case KING -> '♔';
         };
     }
 
@@ -37,7 +56,7 @@ public class Notation {
             case 'R' -> PieceType.ROOK;
             case 'Q' -> PieceType.QUEEN;
             case 'K' -> PieceType.KING;
-            default -> null;
+            default -> throw new IllegalStateException("Unexpected value: " + symbol);
         };
     }
 
@@ -53,7 +72,7 @@ public class Notation {
             return (fromSquareY < move.getToSquare().getY()) ? "O-O" : "O-O-O";
         }
         if (!isPawn) {
-            res.append(Notation.getPieceSymbol(move.getMovingPiece().getType()));
+            res.append(Notation.getUnicodePieceSymbolFromType(move.getMovingPiece().getType()));
         }
         if (isPawn) {
             // pawns only and always have to specify the file when capturing

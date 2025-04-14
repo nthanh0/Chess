@@ -162,12 +162,10 @@ public class MoveValidator {
         }
         // check if king has moved
         if ((move.getMovingPiece().hasMoved())) {
-            System.out.println("KING HAS MOVED");
             return false;
         }
         // check if king is in check
         if (board.isCheck(move.getMovingPiece().getColor())) {
-            System.out.println("KING IS IN CHECK");
             return false;
         }
 
@@ -190,13 +188,11 @@ public class MoveValidator {
         boolean isShortCastle = (fromY == 4 && toY == 6);
         boolean isLongCastle = (fromY == 4 && toY == 2);
         if (!isShortCastle && !isLongCastle) {
-            System.out.println("NOT A CASTLE");
             return false;
         }
 
         // check if king is in check after move
         if (!board.isSafeAfterMove(move)) {
-            System.out.println("NOT SAFE");
             return false;
         }
 
@@ -212,7 +208,6 @@ public class MoveValidator {
         if (originalRookSquare.isEmpty()
             || originalRookSquare.getPiece().hasMoved()
             || isPathBlocked(board, rookToKing)) {
-            System.out.println("ROOK SQUARE IS NOT INACT");
             return false;
         }
 
@@ -227,7 +222,6 @@ public class MoveValidator {
         ArrayList<Move> validMoves = board.generateAllValidMoves(opponentColor);
         for (Move validMove : validMoves) {
             if (validMove.getToSquare().equals(squareToCheck)) {
-                System.out.println("KING PASSES THROUGH UNSAFE SQUARE");
                 return false;
             }
         }

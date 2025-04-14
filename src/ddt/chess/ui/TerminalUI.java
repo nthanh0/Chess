@@ -5,6 +5,10 @@ import ddt.chess.core.MoveHistory;
 import ddt.chess.util.Notation;
 
 
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -31,7 +35,7 @@ public class TerminalUI {
                 break;
             }
 
-            String startString = scanner.nextLine().trim();
+            String startString = scanner.nextLine().toLowerCase().trim();
             if (startString.equals("undo")) {
                 game.undoLastMove();
                 continue;
@@ -54,12 +58,66 @@ public class TerminalUI {
                 break;
             }
 
-            String destString = scanner.nextLine().trim();
+            String destString = scanner.nextLine().toLowerCase().trim();
             Square toSquare = Notation.getSquareFromNotation(board, destString);
-            game.makeMove(new Move(fromSquare, toSquare));
+            Move move = new Move(fromSquare, toSquare);
+            boolean isValidMove = game.makeMove(move);
+            String filePath = "";
+            if (isValidMove) {
+                if (board.isCheck(game.getCurrentTurn())) {
+                    filePath = "resources/sound/move-check.wav";
+                } else if (move.getMoveType() == MoveType.PROMOTION) {
+                    filePath = "resources/sound/promote.wav";
+                } else {
+                    if (move.isCapture()) {
+                        filePath = "resources/sound/capture.wav";
+                    } else {
+                        filePath = "resources/sound/move.wav";
+                    }
+                }
+            } else {
+                filePath = "resources/sound/illegal.wav";
+            }
+            File file = new File(filePath);
+            try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(file)) {
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioStream);
+                clip.start();
+            }
+            catch (FileNotFoundException e) {
+                System.out.println("File not found");
+            }
+            catch (UnsupportedAudioFileException e) {
+                System.out.println("Unsupported audio file");
+            }
+            catch (IOException e) {
+                System.out.println("Something went wrong");
+            }
+            catch (LineUnavailableException e) {
+                System.out.println("Unable to access audio resource");
+            }
         }
 
         printBoard(board);
+        String filePath = "resources/sound/game-end.wav";
+        File file = new File(filePath);
+        try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(file)) {
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
+        catch (UnsupportedAudioFileException e) {
+            System.out.println("Unsupported audio file");
+        }
+        catch (IOException e) {
+            System.out.println("Something went wrong");
+        }
+        catch (LineUnavailableException e) {
+            System.out.println("Unable to access audio resource");
+        }
         System.out.println(game.isOver() ? game.getGameOverMessage() : "Game terminated early.");
     }
 
@@ -73,18 +131,7 @@ public class TerminalUI {
                     System.out.print(". "); // Use a consistent placeholder for empty squares
                 } else {
                     Piece piece = square.getPiece();
-                    char pieceChar = ' ';
-                    switch(piece.getType()) {
-                        case PAWN -> pieceChar = 'p';
-                        case QUEEN -> pieceChar = 'q';
-                        case KING -> pieceChar = 'k';
-                        case KNIGHT -> pieceChar = 'n';
-                        case BISHOP -> pieceChar = 'b';
-                        case ROOK -> pieceChar = 'r';
-                    }
-                    if (piece.getColor() == PieceColor.WHITE) {
-                        pieceChar = Character.toUpperCase(pieceChar);
-                    }
+                    char pieceChar = Notation.getPieceSymbolFromPiece(piece);
                     System.out.print(pieceChar + " ");
                 }
             }

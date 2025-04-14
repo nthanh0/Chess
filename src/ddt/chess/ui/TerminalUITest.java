@@ -10,11 +10,11 @@ public class TerminalUITest {
 //         testCheckmate();
 //         testCheck();
         // testEnPassant();
-         testKingsideCastling();
+//         testKingsideCastling();
 //         testQueensideCastling();
 //         testUndoMove();
 //        testUndoEnPassantAndRepeat();
-        // testUndoCastlingAndRepeat();
+         testUndoCastlingAndRepeat();
     }
 
     /**
