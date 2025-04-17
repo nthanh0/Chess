@@ -9,12 +9,12 @@ public class TerminalUITest {
 
 //         testCheckmate();
 //         testCheck();
-        // testEnPassant();
+         testEnPassant();
 //         testKingsideCastling();
 //         testQueensideCastling();
 //         testUndoMove();
 //        testUndoEnPassantAndRepeat();
-         testUndoCastlingAndRepeat();
+//         testUndoCastlingAndRepeat();
     }
 
     /**

@@ -1,12 +1,15 @@
 package ddt.chess.core;
 import ddt.chess.logic.MoveValidator;
 import ddt.chess.ui.TerminalUI;
+import ddt.chess.util.TimerClock;
 
 public class Game {
     private Board board;
     private final MoveHistory history;
     private Player playerWhite;
     private Player playerBlack;
+    private TimerClock whiteClock;
+    private TimerClock blackClock;
     private PieceColor turn = PieceColor.WHITE;
 
     private String gameOverMessage;
@@ -15,6 +18,15 @@ public class Game {
         board = new Board();
         board.setupPieces();
         history = new MoveHistory();
+    }
+
+    // timed game
+    public Game(TimerClock whiteClock, TimerClock blackClock) {
+        board = new Board();
+        board.setupPieces();
+        history = new MoveHistory();
+        this.whiteClock = whiteClock;
+        this.blackClock = blackClock;
     }
 
     public boolean makeMove(Move move) {
@@ -139,6 +151,18 @@ public class Game {
 
     public void switchTurns() {
         turn = (turn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
+    }
+
+    public TimerClock getWhiteClock() {
+        return whiteClock;
+    }
+
+    public TimerClock getBlackClock() {
+        return blackClock;
+    }
+
+    public boolean isTimedGame() {
+        return (whiteClock != null && blackClock != null);
     }
 
 }

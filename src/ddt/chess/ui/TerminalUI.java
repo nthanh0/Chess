@@ -3,8 +3,7 @@ package ddt.chess.ui;
 import ddt.chess.core.*;
 import ddt.chess.core.MoveHistory;
 import ddt.chess.util.Notation;
-
-
+import ddt.chess.util.TimerClock;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,17 +13,40 @@ import java.util.Scanner;
 
 public class TerminalUI {
     private final Scanner scanner;
+    Game game;
 
     public TerminalUI(InputStream in) {
         this.scanner = new Scanner(in);
     }
 
     public void run() {
-        Game game = new Game();
+        game = new Game(new TimerClock("00:00:15"), new TimerClock("00:00:15"));
+        TimerClock whiteClock = game.getWhiteClock();
+        TimerClock blackClock = game.getBlackClock();
         Board board = game.getBoard();
         MoveHistory history = game.getHistory();
+        Thread whiteClockThread = new Thread(whiteClock);
+        Thread blackClockThread = new Thread(blackClock);
 
+        label:
         while (!game.isOver()) {
+            printTime();
+            if (game.isTimedGame()) {
+                if (whiteClock.isFinished()) {
+                    System.out.println("White ran out of time. Black wins!");
+                    break;
+                } else if (blackClock.isFinished()) {
+                    System.out.println("Black ran out of time. White wins!");
+                    break;
+                }
+            }
+            if (game.getCurrentTurn() == PieceColor.WHITE) {
+                blackClock.pause();
+                whiteClock.resume();
+            } else {
+                whiteClock.pause();
+                blackClock.resume();
+            }
             printHistory(board, history);
             printBoard(board);
             System.out.print("Enter starting square: ");
@@ -36,20 +58,23 @@ public class TerminalUI {
             }
 
             String startString = scanner.nextLine().toLowerCase().trim();
-            if (startString.equals("undo")) {
-                game.undoLastMove();
-                continue;
-            }
-            if (startString.equals("reset")) {
-                game.resetBoard();
-                continue;
-            }
-            if (startString.equals("quit") || startString.equals("exit")) {
-                System.out.println("Game terminated by user.");
-                break;
+            switch (startString) {
+                case "undo":
+                    game.undoLastMove();
+                    continue;
+                case "reset":
+                    game.resetBoard();
+                    continue;
+                case "quit":
+                case "exit":
+                    System.out.println("Game terminated by user.");
+                    break label;
             }
 
             Square fromSquare = Notation.getSquareFromNotation(board, startString);
+            if (fromSquare == null) {
+                continue;
+            }
 
             System.out.print("Enter destination square: ");
             // Add another check here
@@ -60,6 +85,9 @@ public class TerminalUI {
 
             String destString = scanner.nextLine().toLowerCase().trim();
             Square toSquare = Notation.getSquareFromNotation(board, destString);
+            if (toSquare == null) {
+                continue;
+            }
             Move move = new Move(fromSquare, toSquare);
             boolean isValidMove = game.makeMove(move);
             String filePath = "";
@@ -75,8 +103,15 @@ public class TerminalUI {
                         filePath = "resources/sound/move.wav";
                     }
                 }
+                if (history.getSize() == 1) {
+                    whiteClockThread.start();
+                    blackClockThread.start();
+                }
             } else {
-                filePath = "resources/sound/illegal.wav";
+                if (move.getMovingPiece() != null && move.getMovingPiece().getColor() == game.getCurrentTurn()
+                    && board.isCheck(game.getCurrentTurn())) {
+                    filePath = "resources/sound/illegal.wav";
+                }
             }
             File file = new File(filePath);
             try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(file)) {
@@ -131,7 +166,7 @@ public class TerminalUI {
                     System.out.print(". "); // Use a consistent placeholder for empty squares
                 } else {
                     Piece piece = square.getPiece();
-                    char pieceChar = Notation.getPieceSymbolFromPiece(piece);
+                    char pieceChar = Notation.getPieceLetterFromPiece(piece);
                     System.out.print(pieceChar + " ");
                 }
             }
@@ -144,12 +179,20 @@ public class TerminalUI {
         System.out.println("History: " + history.getHistoryString(board));
     }
 
+    public void printTime() {
+        System.out.print("White time left: ");
+        System.out.println(game.getWhiteClock().getTimeLeftString());
+        System.out.print("Black time left: ");
+        System.out.println(game.getBlackClock().getTimeLeftString());
+    }
+
+
     public static PieceType askForPromotion() {
         char choice;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Choose piece to promote to: Bishop(b), Knight(k), Rook(r), Queen(q): ");
         choice = Character.toUpperCase(scanner.next().charAt(0));
-        return Notation.getPieceTypeFromSymbol(choice);
+        return Notation.getPieceTypeFromLetter(choice);
     }
 
 

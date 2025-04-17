@@ -48,4 +48,8 @@ public class MoveHistory {
         history.clear();
     }
 
+    public int getSize() {
+        return history.size();
+    }
+
 }

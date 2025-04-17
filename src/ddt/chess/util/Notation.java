@@ -7,8 +7,14 @@ public class Notation {
 
     // from e.g "a3" to Square(5, 0);
     public static Square getSquareFromNotation(Board board, String notation) {
+        if (notation.length() < 2) {
+            return null;
+        }
         int x = 7 - (notation.charAt(1) - '1');
         int y = notation.charAt(0) - 'a';
+        if (x < 0 || x > 7 || y < 0 || y > 7) {
+            return null;
+        }
         return board.getSquare(x, y);
     }
 
@@ -18,21 +24,11 @@ public class Notation {
         return "" + (char)('a' + square.getY()) + (char)('1' + (7 - square.getX()));
     }
 
-    public static char getPieceSymbolFromType(PieceType type) {
-        return switch (type) {
-            case PAWN -> 'P';
-            case KNIGHT -> 'N';
-            case BISHOP -> 'B';
-            case ROOK -> 'R';
-            case QUEEN -> 'Q';
-            case KING -> 'K';
-        };
-    }
-
-    public static char getPieceSymbolFromPiece(Piece piece) {
-        char res = getPieceSymbolFromType(piece.getType());
-        if (!piece.isWhite()) {
-            res = Character.toLowerCase(res);
+    // case-sensitive piece letter, uppercase for white, lowercase for black
+    public static char getPieceLetterFromPiece(Piece piece) {
+        char res = piece.getType().getPieceLetter();
+        if (piece.isWhite()) {
+            res = Character.toUpperCase(res);
         }
         return res;
     }
@@ -48,7 +44,7 @@ public class Notation {
         };
     }
 
-    public static PieceType getPieceTypeFromSymbol(char symbol) {
+    public static PieceType getPieceTypeFromLetter(char symbol) {
         return switch (symbol) {
             case 'P' -> PieceType.PAWN;
             case 'N' -> PieceType.KNIGHT;
@@ -72,7 +68,7 @@ public class Notation {
             return (fromSquareY < move.getToSquare().getY()) ? "O-O" : "O-O-O";
         }
         if (!isPawn) {
-            res.append(Notation.getUnicodePieceSymbolFromType(move.getMovingPiece().getType()));
+            res.append(move.getMovingPiece().getType().getPieceLetter());
         }
         if (isPawn) {
             // pawns only and always have to specify the file when capturing
@@ -115,6 +111,11 @@ public class Notation {
             res.append('x');
         }
         res.append(Notation.squareToNotation(move.getToSquare()));
+        // check for promotion
+        if (MoveValidator.isValidPromotion(move)) {
+            char promotedToPieceLetter = move.getToSquare().getPiece().getType().getPieceLetter();
+            res.append('=').append(Character.toUpperCase(promotedToPieceLetter));
+        }
         return res.toString();
     }
 
